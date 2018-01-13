@@ -92,10 +92,7 @@ func SetExcludeDir(pattern string) func(*Checker) {
 // revision is blank, the default VCS revision is used.
 func (c *Checker) Check(rel string, recurse bool, beforeRev, afterRev string) ([]Change, error) {
 	// If revision is unset use VCS's default revision
-	dBefore, dAfter, err := c.vcs.DefaultRevision()
-	if err != nil {
-		return nil, err
-	}
+	dBefore, dAfter := c.vcs.DefaultRevision()
 	if beforeRev == "" {
 		beforeRev = dBefore
 	}
@@ -104,6 +101,7 @@ func (c *Checker) Check(rel string, recurse bool, beforeRev, afterRev string) ([
 	}
 	c.recurse = recurse
 
+	var err error
 	c.path, err = importPathTo(rel)
 	if err != nil {
 		return nil, err
@@ -353,7 +351,7 @@ func (c Checker) parseDir(rev, dir string) (pkg, error) {
 		if err != nil {
 			return pkg{}, fmt.Errorf("could not make path relative for revision %q: %s", rev, err)
 		}
-		if rev != revisionFileSystem {
+		if rev != revisionFS {
 			// prefix revision to file's path when reading from vcs and not file system
 			filename = rev + ":" + filename
 		}
