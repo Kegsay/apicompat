@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bradleyfalzon/apicompat"
+	"github.com/Kegsay/apicompat"
 )
 
 const (
@@ -30,8 +30,7 @@ func main() {
 		os.Exit(exitCodeInternalError)
 	}
 
-	// TODO make it auto discover
-	git, err := apicompat.NewGit(rel)
+	git, err := apicompat.NewVCS(rel)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(exitCodeInternalError)

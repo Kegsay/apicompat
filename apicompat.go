@@ -38,7 +38,7 @@ var (
 
 // Checker is used to check for changes between two versions of a package.
 type Checker struct {
-	vcs         VCS
+	vcs         *VCS
 	vlog        io.Writer
 	path        string         // import path
 	recurse     bool           // scan paths recursively
@@ -59,7 +59,7 @@ func New(options ...func(*Checker)) *Checker {
 }
 
 // SetVCS is an option to New that sets the VCS for the checker.
-func SetVCS(vcs VCS) func(*Checker) {
+func SetVCS(vcs *VCS) func(*Checker) {
 	return func(c *Checker) {
 		c.vcs = vcs
 	}
