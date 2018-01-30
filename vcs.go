@@ -2,6 +2,7 @@ package apicompat
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -18,15 +19,38 @@ type VCS struct {
 	cachedVersion string
 }
 
+func NewLocalVCS(local string) (*VCS, error) {
+	repo, err := vcs.NewRepo("", local)
+	if err != nil {
+		return nil, err
+	}
+	if !repo.CheckLocal() {
+		return nil, errors.New("directory is not a repository")
+	}
+	if !repo.Ping() {
+		return nil, errors.New("cannot ping remote repository")
+	}
+	return &VCS{
+		Repo: repo,
+	}, nil
+}
+
 func NewVCS(remoteURL string) (*VCS, error) {
 	local, err := ioutil.TempDir("", "apicompat")
 	if err != nil {
 		return nil, err
 	}
+	fmt.Printf("Creating new repo %s at %s\n", remoteURL, local)
 	repo, err := vcs.NewRepo(remoteURL, local)
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("Pinging repository...")
+	if !repo.Ping() {
+		return nil, errors.New("Cannot ping remote repository")
+	}
+
+	fmt.Println("Cloning repository...")
 	if err := repo.Get(); err != nil {
 		return nil, err
 	}

@@ -30,7 +30,7 @@ func main() {
 		os.Exit(exitCodeInternalError)
 	}
 
-	git, err := apicompat.NewVCS(rel)
+	git, err := apicompat.NewLocalVCS(".")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(exitCodeInternalError)
